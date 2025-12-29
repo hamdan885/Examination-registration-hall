@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Exam Hall Registration & Verification</title>
+
+<style>
+body{
+    font-family: Arial;
+    background:#eef2ff;
+    margin:0;
+}
+header{
+    background:#1e3a8a;
+    color:white;
+    padding:15px;
+    text-align:center;
+}
+.container{
+    background:white;
+    width:90%;
+    max-width:500px;
+    margin:25px auto;
+    padding:20px;
+    border-radius:8px;
+}
+h2{ color:#1e3a8a; text-align:center; }
+input,select,button{
+    width:100%;
+    padding:10px;
+    margin-top:10px;
+}
+button{
+    background:#1e3a8a;
+    color:white;
+    border:none;
+    cursor:pointer;
+}
+button:hover{ background:#172554; }
+.result{ text-align:center; margin-top:15px; font-weight:bold; }
+.hidden{ display:none; }
+</style>
+</head>
+
+<body>
+
+<header>
+<h1>Examination Hall System</h1>
+</header>
+
+<!-- ADMIN LOGIN -->
+<div class="container" id="loginBox">
+<h2>Admin Login</h2>
+<input type="text" id="adminUser" placeholder="Username">
+<input type="password" id="adminPass" placeholder="Password">
+<button onclick="login()">Login</button>
+</div>
+
+<!-- REGISTRATION -->
+<div class="container hidden" id="registerBox">
+<h2>Student Registration</h2>
+<input type="text" id="name" placeholder="Student Name">
+<input type="text" id="regNo" placeholder="Registration Number">
+
+<select id="hall">
+<option value="">Select Hall</option>
+<option>Hall A</option>
+<option>Hall B</option>
+<option>Hall C</option>
+</select>
+
+<button onclick="register()">Register Student</button>
+</div>
+
+<!-- VERIFICATION -->
+<div class="container">
+<h2>Hall Verification</h2>
+<input type="text" id="verifyReg" placeholder="Registration Number">
+<button onclick="verify()">Verify</button>
+<div class="result" id="result"></div>
+</div>
+
+<script>
+/* ADMIN LOGIN */
+function login(){
+    let u=document.getElementById("adminUser").value;
+    let p=document.getElementById("adminPass").value;
+
+    if(u==="admin" && p==="1234"){
+        document.getElementById("loginBox").classList.add("hidden");
+        document.getElementById("registerBox").classList.remove("hidden");
+        alert("Admin Login Successful");
+    }else{
+        alert("Wrong Login Details");
+    }
+}
+
+/* REGISTRATION */
+function register(){
+    let name=document.getElementById("name").value;
+    let reg=document.getElementById("regNo").value;
+    let hall=document.getElementById("hall").value;
+
+    if(name===""||reg===""||hall===""){
+        alert("Fill all fields");
+        return;
+    }
+
+    let students=JSON.parse(localStorage.getItem("students")) || {};
+    students[reg]={name:name,hall:hall};
+    localStorage.setItem("students",JSON.stringify(students));
+
+    alert("Student Registered Successfully");
+    document.getElementById("name").value="";
+    document.getElementById("regNo").value="";
+    document.getElementById("hall").value="";
+}
+
+/* VERIFICATION */
+function verify(){
+    let reg=document.getElementById("verifyReg").value;
+    let result=document.getElementById("result");
+    let students=JSON.parse(localStorage.getItem("students")) || {};
+
+    if(students[reg]){
+        result.style.color="green";
+        result.innerHTML=
+        "✔ Verified<br>Name: "+students[reg].name+
+        "<br>Hall: "+students[reg].hall+
+        "<br><br>QR Code:<br>"+
+        "<img src='https://api.qrserver.com/v1/create-qr-code/?size=150x150&data="+reg+"'>";
+    }else{
+        result.style.color="red";
+        result.innerHTML="❌ Registration Not Found";
+    }
+}
+</script>
+
+</body>
+</html>
