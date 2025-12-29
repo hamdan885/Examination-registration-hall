@@ -2,19 +2,19 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Exam Hall Registration & Verification</title>
+<title>Exam Hall Registration</title>
 
 <style>
 body{
-    font-family: Arial;
+    font-family: Arial, sans-serif;
     background:#eef2ff;
     margin:0;
 }
 header{
     background:#1e3a8a;
     color:white;
-    padding:15px;
     text-align:center;
+    padding:15px;
 }
 .container{
     background:white;
@@ -23,9 +23,13 @@ header{
     margin:25px auto;
     padding:20px;
     border-radius:8px;
+    box-shadow:0 0 10px rgba(0,0,0,0.1);
 }
-h2{ color:#1e3a8a; text-align:center; }
-input,select,button{
+h2{
+    text-align:center;
+    color:#1e3a8a;
+}
+input, select, button{
     width:100%;
     padding:10px;
     margin-top:10px;
@@ -36,9 +40,17 @@ button{
     border:none;
     cursor:pointer;
 }
-button:hover{ background:#172554; }
-.result{ text-align:center; margin-top:15px; font-weight:bold; }
-.hidden{ display:none; }
+button:hover{
+    background:#172554;
+}
+.result{
+    margin-top:15px;
+    font-weight:bold;
+    text-align:center;
+}
+.hidden{
+    display:none;
+}
 </style>
 </head>
 
@@ -56,82 +68,87 @@ button:hover{ background:#172554; }
 <button onclick="login()">Login</button>
 </div>
 
-<!-- REGISTRATION -->
+<!-- STUDENT REGISTRATION -->
 <div class="container hidden" id="registerBox">
 <h2>Student Registration</h2>
+
 <input type="text" id="name" placeholder="Student Name">
 <input type="text" id="regNo" placeholder="Registration Number">
 
 <select id="hall">
-<option value="">Select Hall</option>
+<option value="">Select Exam Hall</option>
 <option>Hall A</option>
 <option>Hall B</option>
 <option>Hall C</option>
 </select>
 
-<button onclick="register()">Register Student</button>
+<button onclick="registerStudent()">Register</button>
 </div>
 
 <!-- VERIFICATION -->
 <div class="container">
 <h2>Hall Verification</h2>
-<input type="text" id="verifyReg" placeholder="Registration Number">
-<button onclick="verify()">Verify</button>
+
+<input type="text" id="verifyReg" placeholder="Enter Registration Number">
+<button onclick="verifyStudent()">Verify</button>
+
 <div class="result" id="result"></div>
 </div>
 
 <script>
-/* ADMIN LOGIN */
+// ADMIN LOGIN
 function login(){
-    let u=document.getElementById("adminUser").value;
-    let p=document.getElementById("adminPass").value;
+    let u = document.getElementById("adminUser").value;
+    let p = document.getElementById("adminPass").value;
 
-    if(u==="admin" && p==="1234"){
+    if(u === "admin" && p === "1234"){
         document.getElementById("loginBox").classList.add("hidden");
         document.getElementById("registerBox").classList.remove("hidden");
         alert("Admin Login Successful");
-    }else{
-        alert("Wrong Login Details");
+    } else {
+        alert("Invalid Login Details");
     }
 }
 
-/* REGISTRATION */
-function register(){
-    let name=document.getElementById("name").value;
-    let reg=document.getElementById("regNo").value;
-    let hall=document.getElementById("hall").value;
+// REGISTER STUDENT
+function registerStudent(){
+    let name = document.getElementById("name").value;
+    let reg = document.getElementById("regNo").value;
+    let hall = document.getElementById("hall").value;
 
-    if(name===""||reg===""||hall===""){
-        alert("Fill all fields");
+    if(name === "" || reg === "" || hall === ""){
+        alert("Please fill all fields");
         return;
     }
 
-    let students=JSON.parse(localStorage.getItem("students")) || {};
-    students[reg]={name:name,hall:hall};
-    localStorage.setItem("students",JSON.stringify(students));
+    let students = JSON.parse(localStorage.getItem("students")) || {};
+    students[reg] = { name: name, hall: hall };
+    localStorage.setItem("students", JSON.stringify(students));
 
     alert("Student Registered Successfully");
-    document.getElementById("name").value="";
-    document.getElementById("regNo").value="";
-    document.getElementById("hall").value="";
+
+    document.getElementById("name").value = "";
+    document.getElementById("regNo").value = "";
+    document.getElementById("hall").value = "";
 }
 
-/* VERIFICATION */
-function verify(){
-    let reg=document.getElementById("verifyReg").value;
-    let result=document.getElementById("result");
-    let students=JSON.parse(localStorage.getItem("students")) || {};
+// VERIFY STUDENT
+function verifyStudent(){
+    let reg = document.getElementById("verifyReg").value;
+    let result = document.getElementById("result");
+
+    let students = JSON.parse(localStorage.getItem("students")) || {};
 
     if(students[reg]){
-        result.style.color="green";
-        result.innerHTML=
-        "✔ Verified<br>Name: "+students[reg].name+
-        "<br>Hall: "+students[reg].hall+
-        "<br><br>QR Code:<br>"+
-        "<img src='https://api.qrserver.com/v1/create-qr-code/?size=150x150&data="+reg+"'>";
-    }else{
-        result.style.color="red";
-        result.innerHTML="❌ Registration Not Found";
+        result.style.color = "green";
+        result.innerHTML =
+            "✔ VERIFIED<br>" +
+            "Name: " + students[reg].name + "<br>" +
+            "Hall: " + students[reg].hall + "<br><br>" +
+            "<img src='https://api.qrserver.com/v1/create-qr-code/?size=150x150&data="+reg+"'>";
+    } else {
+        result.style.color = "red";
+        result.innerHTML = "❌ Registration Number Not Found";
     }
 }
 </script>
